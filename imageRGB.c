@@ -586,10 +586,27 @@ int ImageIsDifferent(const Image img1, const Image img2) {
 Image ImageRotate90CW(const Image img) {
   assert(img != NULL);
 
-  // TO BE COMPLETED
-  // ...
+    // Criar uma nova imagem com as dimensões trocadas
+    Image new_img = AllocateImageHeader(img->height, img->width);
 
-  return NULL;
+    // Copiar a tabela de cores (LUT)
+    new_img->num_colors = img->num_colors;
+    memcpy(new_img->LUT, img->LUT, img->num_colors * sizeof(rgb_t));
+
+    // Alocar as linhas da nova imagem
+    for (uint32 i = 0; i < new_img->height; i++) {
+        new_img->image[i] = AllocateRowArray(new_img->width);
+    }
+
+    // Copiar os pixels ao aplicar a rotação de 90° 
+    for (uint32 i = 0; i < img->height; i++) {
+        for (uint32 j = 0; j < img->width; j++) {
+            new_img->image[j][new_img->height - 1 - i] = img->image[i][j];
+            PIXMEM += 2;  // Contar 
+        }
+    }
+
+    return new_img; // Retornar a nova imagem 
 }
 
 /// Rotate 180 degrees clockwise (CW).
@@ -601,10 +618,26 @@ Image ImageRotate90CW(const Image img) {
 Image ImageRotate180CW(const Image img) {
   assert(img != NULL);
 
-  // TO BE COMPLETED
-  // ...
+    Image new_img = AllocateImageHeader(img->width, img->height);
 
-  return NULL;
+    // Copiar a tabela de cores (LUT)
+    new_img->num_colors = img->num_colors;
+    memcpy(new_img->LUT, img->LUT, img->num_colors * sizeof(rgb_t));
+
+    // Alocar as linhas da nova imagem
+    for (uint32 i = 0; i < new_img->height; i++) {
+        new_img->image[i] = AllocateRowArray(new_img->width);
+    }
+
+    // Copiar os pixels aplicando a rotação de 180° no sentido horário
+    for (uint32 i = 0; i < img->height; i++) {
+        for (uint32 j = 0; j < img->width; j++) {
+            new_img->image[new_img->height - 1 - i][new_img->width - 1 - j] = img->image[i][j];
+            PIXMEM += 2;  // Contar 
+        }
+    }
+
+    return new_img;  // Retornar a nova imagem
 }
 
 /// Check whether pixel coords (u, v) are inside img.
