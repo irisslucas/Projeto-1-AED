@@ -55,6 +55,28 @@ int main(int argc, char* argv[]) {
     ImageSavePBM(copy_image, "copy_image.pbm");
   }
 
+
+  printf("9) ImageRotate90CW\n");
+  Image rotated_90 = ImageRotate90CW(image_chess_2);
+  printf("Original Image:\n");
+  ImageRAWPrint(image_chess_2);
+  printf("Rotated 90 degrees CW:\n");
+  ImageRAWPrint(rotated_90);
+  ImageSavePPM(rotated_90, "chess_image_rotated_90.ppm");
+
+  printf("10) ImageRotate180CW\n");
+  Image rotated_180 = ImageRotate180CW(image_chess_2);
+  printf("Original Image:\n");
+  ImageRAWPrint(image_chess_2);
+  printf("Rotated 180 degrees CW:\n");
+  ImageRAWPrint(rotated_180);
+  ImageSavePPM(rotated_180, "chess_image_rotated_180.ppm");
+
+  // Cleanup: destroy rotated images
+  ImageDestroy(&rotated_90);
+  ImageDestroy(&rotated_180);
+
+
   printf("6) ImageLoadPBM\n");
   Image image_1 = ImageLoadPBM("img/feep.pbm");
   ImageRAWPrint(image_1);
