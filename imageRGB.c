@@ -670,10 +670,25 @@ int ImageRegionFillingRecursive(Image img, int u, int v, uint16 label) {
   assert(ImageIsValidPixel(img, u, v));
   assert(label < FIXED_LUT_SIZE);
 
-  // TO BE COMPLETED
-  // ...
+  // verificar se o pixel é valido e branco
+    if (!ImageIsValidPixel(img, u, v))
+        return 0; // sai se o pixel estiver fora da imagem 
+    if (img->pixels[v * img->width + u] != 0)  // só preenche se for branco
+        return 0; //sai se o pixel ja tiver uma cor (não é branco)
 
-  return 0;
+    // preencher o pixel com a nova label
+    img->pixels[v * img->width + u] = label;
+
+    // inicializar contagem de pixeis
+    int count = 1;
+
+    // chamada recursiva para os 4 neighbors
+    count += ImageRegionFillingRecursive(img, u + 1, v, label);
+    count += ImageRegionFillingRecursive(img, u - 1, v, label);
+    count += ImageRegionFillingRecursive(img, u, v + 1, label);
+    count += ImageRegionFillingRecursive(img, u, v - 1, label);
+
+    return count;
 }
 
 /// Region growing using a STACK of pixel coordinates to
@@ -716,8 +731,24 @@ int ImageSegmentation(Image img, FillingFunction fillFunct) {
   assert(img != NULL);
   assert(fillFunct != NULL);
 
-  // TO BE COMPLETED
-  // ...
+  int numRegions = 0;
 
-  return 0;
+    // percorrer todos os pixeis da imagem
+    for (int v = 0; v < img->height; v++) {
+        for (int u = 0; u < img->width; u++) {
+            // verificar se o pixel é branco 
+            if (img->pixels[v * img->width + u] == 0) {
+                // gerar novo indice de cor
+                int nextColor = GenerateNextColor();
+                
+                // preencher a região 
+                fillFunct(img, u, v, nextColor);
+
+                // incrementar o numero de regioes encontradas
+                numRegions++;
+            }
+        }
+    }
+
+    return numRegions;
 }
