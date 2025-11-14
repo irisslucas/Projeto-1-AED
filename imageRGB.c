@@ -284,11 +284,22 @@ void ImageDestroy(Image* imgp) {
 Image ImageCopy(const Image img) {
   assert(img != NULL);
 
-  // TO BE COMPLETED
-  // ...
+  // Criar uma nova imagem
+  Image img_copy = AllocateImageHeader(img->width, img->height);
 
-  return NULL;
+  // Copiar a tabela de cores (LUT)
+  img_copy-> num_colors = img-> num_colors;
+  memcpy(img_copy->LUT, img->LUT, img->num_colors * sizeof(rgb_t));
+
+  // Alocar as linhas da copia e copiar pixeis
+  for (uint32 i = 0; i < img->height; i++) {
+      img_copy->image[i] = AllocateRowArray(img->width);
+      memcpy(img_copy->image[i], img->image[i], img->width * sizeof(uint16));
+  }
+
+  return img_copy; // Retornar a copia
 }
+
 
 /// Printing on the console
 
@@ -556,10 +567,23 @@ int ImageIsEqual(const Image img1, const Image img2) {
   assert(img1 != NULL);
   assert(img2 != NULL);
 
-  // TO BE COMPLETED
-  // ...
 
-  return 0;
+  // ver dimensoes
+  if(img1->width != img2->width || img1->height != img2->height){
+    return 0;
+  }
+  // ver cores
+  for (uint32 i=0; i < img1->height; i++){
+    for (uint32 j=0;j < img1->width; j++){
+      rgb_t c1 = img1->LUT[img1->image[i][j]];
+      rgb_t c2 = img2->LUT[img2->image[i][j]];
+      if (c1 != c2){
+        return 0;
+      }
+    }
+  }
+
+  return 1;
 }
 
 int ImageIsDifferent(const Image img1, const Image img2) {
