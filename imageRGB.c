@@ -288,7 +288,7 @@ Image ImageCopy(const Image img) {
   Image img_copy = AllocateImageHeader(img->width, img->height);
 
   // Copiar a tabela de cores (LUT)
-  img_copy-> num_colors = img-> num_colors;
+  img_copy->num_colors = img->num_colors;
   memcpy(img_copy->LUT, img->LUT, img->num_colors * sizeof(rgb_t));
 
   // Alocar as linhas da copia e copiar pixeis
@@ -568,11 +568,11 @@ int ImageIsEqual(const Image img1, const Image img2) {
   assert(img2 != NULL);
 
 
-  // ver dimensoes
+  // Comparar dimensoes
   if(img1->width != img2->width || img1->height != img2->height){
     return 0;
   }
-  // ver cores
+  // Comparar cores
   for (uint32 i=0; i < img1->height; i++){
     for (uint32 j=0;j < img1->width; j++){
       rgb_t c1 = img1->LUT[img1->image[i][j]];
