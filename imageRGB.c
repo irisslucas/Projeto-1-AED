@@ -694,19 +694,18 @@ int ImageRegionFillingRecursive(Image img, int u, int v, uint16 label) {
   assert(ImageIsValidPixel(img, u, v));
   assert(label < FIXED_LUT_SIZE);
 
-  // verificar se o pixel é valido e branco
+  // se o pixel não é válido ou não é branco
     if (!ImageIsValidPixel(img, u, v))
-        return 0; // sai se o pixel estiver fora da imagem 
-    if (img->pixels[v * img->width + u] != 0)  // só preenche se for branco
-        return 0; //sai se o pixel ja tiver uma cor (não é branco)
+        return 0;
 
-    // preencher o pixel com a nova label
-    img->pixels[v * img->width + u] = label;
+    if (img->image[v][u] != 0)  // só preenche fundo 
+        return 0;
 
-    // inicializar contagem de pixeis
+    // preencher o pixel
+    img->image[v][u] = label;
     int count = 1;
 
-    // chamada recursiva para os 4 neighbors
+    // expandir para neighbors
     count += ImageRegionFillingRecursive(img, u + 1, v, label);
     count += ImageRegionFillingRecursive(img, u - 1, v, label);
     count += ImageRegionFillingRecursive(img, u, v + 1, label);
@@ -722,10 +721,35 @@ int ImageRegionFillingWithSTACK(Image img, int u, int v, uint16 label) {
   assert(ImageIsValidPixel(img, u, v));
   assert(label < FIXED_LUT_SIZE);
 
-  // TO BE COMPLETED
-  // ...
+  PixelCoordsStack stack = PixelCoordsStackCreate();
 
-  return 0;
+    PixelCoordsStackPush(stack, (PixelCoords){u, v});
+    int count = 0;
+
+    while (!PixelCoordsStackIsEmpty(stack)) {
+        PixelCoords p = PixelCoordsStackPop(stack);
+
+        int x = p.u;
+        int y = p.v;
+
+        if (!ImageIsValidPixel(img, x, y))
+            continue;
+
+        if (img->image[y][x] != 0)  // só preenche o fundo
+            continue;
+
+        img->image[y][x] = label;
+        count++;
+
+        // empurrar neighbors para a stack
+        PixelCoordsStackPush(stack, (PixelCoords){x + 1, y});
+        PixelCoordsStackPush(stack, (PixelCoords){x - 1, y});
+        PixelCoordsStackPush(stack, (PixelCoords){x, y + 1});
+        PixelCoordsStackPush(stack, (PixelCoords){x, y - 1});
+    }
+
+    PixelCoordsStackDestroy(&stack);
+    return count;
 }
 
 /// Region growing using a QUEUE of pixel coordinates to
@@ -735,10 +759,43 @@ int ImageRegionFillingWithQUEUE(Image img, int u, int v, uint16 label) {
   assert(ImageIsValidPixel(img, u, v));
   assert(label < FIXED_LUT_SIZE);
 
-  // TO BE COMPLETED
-  // ...
+  // criar uma fila para armazenar as coordenadas dos pixels a processar
+  PixelCoordsQueue queue = PixelCoordsQueueCreate();
 
-  return 0;
+ // inserir o pixel inicial na fila
+  PixelCoordsQueueEnqueue(queue, (PixelCoords){u, v});
+  int count = 0; //contar os pixels preenchidos
+
+  // enquanto houver pixels na fila
+  while (!PixelCoordsQueueIsEmpty(queue)) {
+
+     // retirar um pixel da fila
+    PixelCoords p = PixelCoordsQueueDequeue(queue);
+
+    int x = p.u;
+    int y = p.v;
+
+// ignorar pixels fora da imagem
+    if (!ImageIsValidPixel(img, x, y))
+        continue;
+
+
+// ignorar pixels que já foram preenchidos ou não são brancos
+    if (img->image[y][x] != 0)
+        continue;
+
+    img->image[y][x] = label;
+    count++;
+// adicionar os 4 neighbors à fila
+    PixelCoordsQueueEnqueue(queue, (PixelCoords){x + 1, y});
+    PixelCoordsQueueEnqueue(queue, (PixelCoords){x - 1, y});
+    PixelCoordsQueueEnqueue(queue, (PixelCoords){x, y + 1});
+    PixelCoordsQueueEnqueue(queue, (PixelCoords){x, y - 1});
+  }
+  
+
+  PixelCoordsQueueDestroy(&queue);
+  return count;
 }
 
 /// Image Segmentation
@@ -757,22 +814,26 @@ int ImageSegmentation(Image img, FillingFunction fillFunct) {
 
   int numRegions = 0;
 
-    // percorrer todos os pixeis da imagem
-    for (int v = 0; v < img->height; v++) {
-        for (int u = 0; u < img->width; u++) {
-            // verificar se o pixel é branco 
-            if (img->pixels[v * img->width + u] == 0) {
-                // gerar novo indice de cor
-                int nextColor = GenerateNextColor();
-                
-                // preencher a região 
-                fillFunct(img, u, v, nextColor);
+  for (int v = 0; v < img->height; v++) {
+          for (int u = 0; u < img->width; u++) {
 
-                // incrementar o numero de regioes encontradas
-                numRegions++;
-            }
-        }
-    }
+              // só começamos uma nova região se o pixel for branco
+              if (img->image[v][u] == 0) {
 
-    return numRegions;
-}
+                  // criar uma nova cor RGB para a LUT
+                  rgb_t newColor = GenerateNextColor(img->LUT[img->num_colors - 1]);
+
+                  // inserir a cor 
+                  uint16 label = LUTAllocColor(img, newColor);
+
+                  // preencher a região 
+                  fillFunct(img, u, v, label);
+
+                  // contabilizar mais uma região 
+                  numRegions++;
+              }
+          }
+      }
+
+      return numRegions;
+  }
