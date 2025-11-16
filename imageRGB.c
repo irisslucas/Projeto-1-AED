@@ -721,35 +721,43 @@ int ImageRegionFillingWithSTACK(Image img, int u, int v, uint16 label) {
   assert(ImageIsValidPixel(img, u, v));
   assert(label < FIXED_LUT_SIZE);
 
+  // se o pixel inicial não for branco não há região a preencher
   if (img->image[v][u] != 0) {
         return 0;
     }
 
-    // CORREÇÃO AQUI: A variável 'stack' tem de ser um ponteiro (Stack*)
+    // cria uma stack para gerir os pixels a visitar
     Stack* stack = StackCreate(img->width * img->height);
+    // adiciona o pixel inicial à stack
     StackPush(stack, (PixelCoords){u, v});
     
-    int count = 0;
+    int count = 0; // contador para o tamanho da região preenchida
 
+    // processa pixels enquanto a stack não estiver vazia
     while (!StackIsEmpty(stack)) {
+        // retira o próximo pixel a processar
         PixelCoords p = StackPop(stack);
         int x = p.u;
         int y = p.v;
 
+        // se o pixel for inválido ou já pintado ignora
         if (!ImageIsValidPixel(img, x, y) || img->image[y][x] != 0) {
             continue;
         }
 
+        // pinta o pixel com a nova cor e incrementa o contador
         img->image[y][x] = label;
         count++;
 
+        // adiciona os pixels vizinhos à stack para processamento
         StackPush(stack, (PixelCoords){x + 1, y});
         StackPush(stack, (PixelCoords){x - 1, y});
         StackPush(stack, (PixelCoords){x, y + 1});
         StackPush(stack, (PixelCoords){x, y - 1});
     }
-
+    // liberta a memória alocada para a stack
     StackDestroy(&stack);
+
     return count;
 }
 
@@ -764,16 +772,21 @@ int ImageRegionFillingWithQUEUE(Image img, int u, int v, uint16 label) {
         return 0;
     }
     
+    // cria uma fila para gerir os pixels a visitar
     Queue* queue = QueueCreate(img->width * img->height);
+    // adiciona o pixel inicial à fila
     QueueEnqueue(queue, (PixelCoords){u, v});
-    
+
+    // contador para o tamanho da região preenchida
     int count = 0;
 
+    // processa pixels enquanto a fila não estiver vazia
     while (!QueueIsEmpty(queue)) {
+        // retira o próximo pixel a processar
         PixelCoords p = QueueDequeue(queue);
         int x = p.u;
         int y = p.v;
-
+        // se o pixel for inválido ou já pintado ignora
         if (!ImageIsValidPixel(img, x, y) || img->image[y][x] != 0) {
             continue;
         }
@@ -781,12 +794,14 @@ int ImageRegionFillingWithQUEUE(Image img, int u, int v, uint16 label) {
         img->image[y][x] = label;
         count++;
 
+        // adiciona os pixels vizinhos à fila para processamento
         QueueEnqueue(queue, (PixelCoords){x + 1, y});
         QueueEnqueue(queue, (PixelCoords){x - 1, y});
         QueueEnqueue(queue, (PixelCoords){x, y + 1});
         QueueEnqueue(queue, (PixelCoords){x, y - 1});
     }
 
+    // liberta a memória alocada para a fila
     QueueDestroy(&queue);
     return count;
 }
