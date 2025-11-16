@@ -11,8 +11,8 @@
 /// 2025
 
 // Student authors (fill in below):
-// NMec:
-// Name:
+// NMec: 125348
+// Name: Íris Lucas
 // NMec:
 // Name:
 //
@@ -725,33 +725,31 @@ int ImageRegionFillingWithSTACK(Image img, int u, int v, uint16 label) {
         return 0;
     }
 
-    PixelCoordsStack stack = PixelCoordsStackCreate();
-    PixelCoordsStackPush(stack, (PixelCoords){u, v});
+    // CORREÇÃO AQUI: A variável 'stack' tem de ser um ponteiro (Stack*)
+    Stack* stack = StackCreate(img->width * img->height);
+    StackPush(stack, (PixelCoords){u, v});
     
     int count = 0;
 
-    while (!PixelCoordsStackIsEmpty(stack)) {
-        PixelCoords p = PixelCoordsStackPop(stack);
+    while (!StackIsEmpty(stack)) {
+        PixelCoords p = StackPop(stack);
         int x = p.u;
         int y = p.v;
 
-        // Verifica se o pixel é válido e se ainda é branco
         if (!ImageIsValidPixel(img, x, y) || img->image[y][x] != 0) {
             continue;
         }
 
-        // Pinta o pixel
         img->image[y][x] = label;
         count++;
 
-        // Adiciona vizinhos à pilha
-        PixelCoordsStackPush(stack, (PixelCoords){x + 1, y});
-        PixelCoordsStackPush(stack, (PixelCoords){x - 1, y});
-        PixelCoordsStackPush(stack, (PixelCoords){x, y + 1});
-        PixelCoordsStackPush(stack, (PixelCoords){x, y - 1});
+        StackPush(stack, (PixelCoords){x + 1, y});
+        StackPush(stack, (PixelCoords){x - 1, y});
+        StackPush(stack, (PixelCoords){x, y + 1});
+        StackPush(stack, (PixelCoords){x, y - 1});
     }
 
-    PixelCoordsStackDestroy(&stack);
+    StackDestroy(&stack);
     return count;
 }
 
@@ -762,22 +760,20 @@ int ImageRegionFillingWithQUEUE(Image img, int u, int v, uint16 label) {
   assert(ImageIsValidPixel(img, u, v));
   assert(label < FIXED_LUT_SIZE);
 
-  /// Verifica o pixel inicial
     if (img->image[v][u] != 0) {
         return 0;
     }
     
-    PixelCoordsQueue queue = PixelCoordsQueueCreate();
-    PixelCoordsQueueEnqueue(queue, (PixelCoords){u, v});
+    Queue* queue = QueueCreate(img->width * img->height);
+    QueueEnqueue(queue, (PixelCoords){u, v});
     
     int count = 0;
 
-    while (!PixelCoordsQueueIsEmpty(queue)) {
-        PixelCoords p = PixelCoordsQueueDequeue(queue);
+    while (!QueueIsEmpty(queue)) {
+        PixelCoords p = QueueDequeue(queue);
         int x = p.u;
         int y = p.v;
 
-        // Verifica se o pixel é válido e se ainda é branco
         if (!ImageIsValidPixel(img, x, y) || img->image[y][x] != 0) {
             continue;
         }
@@ -785,14 +781,13 @@ int ImageRegionFillingWithQUEUE(Image img, int u, int v, uint16 label) {
         img->image[y][x] = label;
         count++;
 
-        // Adiciona vizinhos à fila
-        PixelCoordsQueueEnqueue(queue, (PixelCoords){x + 1, y});
-        PixelCoordsQueueEnqueue(queue, (PixelCoords){x - 1, y});
-        PixelCoordsQueueEnqueue(queue, (PixelCoords){x, y + 1});
-        PixelCoordsQueueEnqueue(queue, (PixelCoords){x, y - 1});
+        QueueEnqueue(queue, (PixelCoords){x + 1, y});
+        QueueEnqueue(queue, (PixelCoords){x - 1, y});
+        QueueEnqueue(queue, (PixelCoords){x, y + 1});
+        QueueEnqueue(queue, (PixelCoords){x, y - 1});
     }
 
-    PixelCoordsQueueDestroy(&queue);
+    QueueDestroy(&queue);
     return count;
 }
 
