@@ -721,27 +721,30 @@ int ImageRegionFillingWithSTACK(Image img, int u, int v, uint16 label) {
   assert(ImageIsValidPixel(img, u, v));
   assert(label < FIXED_LUT_SIZE);
 
-  PixelCoordsStack stack = PixelCoordsStackCreate();
+  if (img->image[v][u] != 0) {
+        return 0;
+    }
 
+    PixelCoordsStack stack = PixelCoordsStackCreate();
     PixelCoordsStackPush(stack, (PixelCoords){u, v});
+    
     int count = 0;
 
     while (!PixelCoordsStackIsEmpty(stack)) {
         PixelCoords p = PixelCoordsStackPop(stack);
-
         int x = p.u;
         int y = p.v;
 
-        if (!ImageIsValidPixel(img, x, y))
+        // Verifica se o pixel é válido e se ainda é branco
+        if (!ImageIsValidPixel(img, x, y) || img->image[y][x] != 0) {
             continue;
+        }
 
-        if (img->image[y][x] != 0)  // só preenche o fundo
-            continue;
-
+        // Pinta o pixel
         img->image[y][x] = label;
         count++;
 
-        // empurrar neighbors para a stack
+        // Adiciona vizinhos à pilha
         PixelCoordsStackPush(stack, (PixelCoords){x + 1, y});
         PixelCoordsStackPush(stack, (PixelCoords){x - 1, y});
         PixelCoordsStackPush(stack, (PixelCoords){x, y + 1});
@@ -759,43 +762,38 @@ int ImageRegionFillingWithQUEUE(Image img, int u, int v, uint16 label) {
   assert(ImageIsValidPixel(img, u, v));
   assert(label < FIXED_LUT_SIZE);
 
-  // criar uma fila para armazenar as coordenadas dos pixels a processar
-  PixelCoordsQueue queue = PixelCoordsQueueCreate();
+  /// Verifica o pixel inicial
+    if (img->image[v][u] != 0) {
+        return 0;
+    }
+    
+    PixelCoordsQueue queue = PixelCoordsQueueCreate();
+    PixelCoordsQueueEnqueue(queue, (PixelCoords){u, v});
+    
+    int count = 0;
 
- // inserir o pixel inicial na fila
-  PixelCoordsQueueEnqueue(queue, (PixelCoords){u, v});
-  int count = 0; //contar os pixels preenchidos
+    while (!PixelCoordsQueueIsEmpty(queue)) {
+        PixelCoords p = PixelCoordsQueueDequeue(queue);
+        int x = p.u;
+        int y = p.v;
 
-  // enquanto houver pixels na fila
-  while (!PixelCoordsQueueIsEmpty(queue)) {
+        // Verifica se o pixel é válido e se ainda é branco
+        if (!ImageIsValidPixel(img, x, y) || img->image[y][x] != 0) {
+            continue;
+        }
 
-     // retirar um pixel da fila
-    PixelCoords p = PixelCoordsQueueDequeue(queue);
+        img->image[y][x] = label;
+        count++;
 
-    int x = p.u;
-    int y = p.v;
+        // Adiciona vizinhos à fila
+        PixelCoordsQueueEnqueue(queue, (PixelCoords){x + 1, y});
+        PixelCoordsQueueEnqueue(queue, (PixelCoords){x - 1, y});
+        PixelCoordsQueueEnqueue(queue, (PixelCoords){x, y + 1});
+        PixelCoordsQueueEnqueue(queue, (PixelCoords){x, y - 1});
+    }
 
-// ignorar pixels fora da imagem
-    if (!ImageIsValidPixel(img, x, y))
-        continue;
-
-
-// ignorar pixels que já foram preenchidos ou não são brancos
-    if (img->image[y][x] != 0)
-        continue;
-
-    img->image[y][x] = label;
-    count++;
-// adicionar os 4 neighbors à fila
-    PixelCoordsQueueEnqueue(queue, (PixelCoords){x + 1, y});
-    PixelCoordsQueueEnqueue(queue, (PixelCoords){x - 1, y});
-    PixelCoordsQueueEnqueue(queue, (PixelCoords){x, y + 1});
-    PixelCoordsQueueEnqueue(queue, (PixelCoords){x, y - 1});
-  }
-  
-
-  PixelCoordsQueueDestroy(&queue);
-  return count;
+    PixelCoordsQueueDestroy(&queue);
+    return count;
 }
 
 /// Image Segmentation
