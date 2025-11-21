@@ -88,6 +88,44 @@ int main(int argc, char* argv[]) {
   printf("8) ImageCreatePalete\n");
   Image image_3 = ImageCreatePalete(4 * 32, 4 * 32, 4);
   ImageSavePPM(image_3, "palete.ppm");
+  
+  //  imagens para testar tempos e numero de comparacoes de ImageIsEqual
+  Image image_smaller = ImageCreate(25, 25);
+  Image image_small = ImageCreate(50, 50);
+  Image image_normal = ImageCreate(100, 100);
+  Image image_big = ImageCreate(200, 200);
+  Image image_bigger = ImageCreate(400, 400);
+
+  //comparacoes de pares de imagens iguais
+  printf("9) ImageComparisons\n");
+
+  printf("Images 25 x 25:\n");
+  InstrReset();
+  int equal = ImageIsEqual(image_smaller, image_smaller); 
+  InstrPrint();
+  InstrReset();
+
+  printf("Images 50 x 50:\n");
+
+  equal = ImageIsEqual(image_small, image_small);
+  InstrPrint();
+  InstrReset();
+
+  printf("Images 100 x 100:\n");
+
+  equal = ImageIsEqual(image_normal, image_normal);
+  InstrPrint();
+  InstrReset();
+
+  printf("Images 200 x 200:\n");
+  equal = ImageIsEqual(image_big, image_big);
+  InstrPrint();
+  InstrReset();
+
+  printf("Images 400 x 400:\n");
+  equal = ImageIsEqual(image_bigger, image_bigger);
+  InstrPrint();
+  InstrReset();
 
   ImageDestroy(&white_image);
   ImageDestroy(&black_image);
@@ -99,6 +137,12 @@ int main(int argc, char* argv[]) {
   ImageDestroy(&image_1);
   ImageDestroy(&image_2);
   ImageDestroy(&image_3);
+  ImageDestroy(&image_smaller);
+  ImageDestroy(&image_small);
+  ImageDestroy(&image_normal);
+  ImageDestroy(&image_big);
+  ImageDestroy(&image_bigger);
+
 
   return 0;
 }

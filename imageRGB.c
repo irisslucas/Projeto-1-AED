@@ -13,8 +13,8 @@
 // Student authors (fill in below):
 // NMec: 125348
 // Name: Íris Lucas
-// NMec:
-// Name:
+// NMec: 115903
+// Name: Carolina Teixeira
 //
 // Date:
 //
@@ -94,11 +94,13 @@ void ImageInit(void) {  ///
   InstrCalibrate();
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   // Name other counters here...
+  InstrName[1] = "compcount";
 }
 
 // Macros to simplify accessing instrumentation counters:
 #define PIXMEM InstrCount[0]
 // Add more macros here...
+#define COMPCOUNT InstrCount[1]     // para contar comparações
 
 // TIP: Search for PIXMEM or InstrCount to see where it is incremented!
 
@@ -577,6 +579,8 @@ int ImageIsEqual(const Image img1, const Image img2) {
     for (uint32 j=0;j < img1->width; j++){
       rgb_t c1 = img1->LUT[img1->image[i][j]];
       rgb_t c2 = img2->LUT[img2->image[i][j]];
+      PIXMEM += 2;
+      COMPCOUNT++;      // aumentar contador de comparacoes
       if (c1 != c2){
         return 0;
       }
