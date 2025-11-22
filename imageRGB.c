@@ -571,6 +571,7 @@ int ImageIsEqual(const Image img1, const Image img2) {
 
 
   // Comparar dimensoes
+  COMPCOUNT++;        //incrementar o contador de comparacoes
   if(img1->width != img2->width || img1->height != img2->height){
     return 0;
   }
