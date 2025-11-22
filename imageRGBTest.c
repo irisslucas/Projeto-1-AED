@@ -96,36 +96,111 @@ int main(int argc, char* argv[]) {
   Image image_big = ImageCreate(200, 200);
   Image image_bigger = ImageCreate(400, 400);
 
+  Image image_smaller_chess = ImageCreateChess(25, 25, 5, 0xff0000);
+  Image image_small_chess = ImageCreateChess(50, 50, 10 ,0xff0000);
+  Image image_normal_chess = ImageCreateChess(100, 100, 20, 0x00000);
+  Image image_big_chess = ImageCreateChess(200, 200, 150, 0xffffff);
+  Image image_bigger_chess = ImageCreateChess(400, 400, 100, 0x000000);
+
+  Image image_rectangle1 = ImageCreate(10, 50);
+  Image image_rectangle2 = ImageCreate(20, 100);
+  Image image_rectangle_chess1 = ImageCreateChess(50, 10, 5,0xff0000);
+  Image image_rectangle_chess2 = ImageCreateChess(100, 20, 5, 0xff0000);
+
   //comparacoes de pares de imagens iguais
-  printf("9) ImageComparisons\n");
+  printf("9) SimpleImageComparisons\n");
 
   printf("Images 25 x 25:\n");
   InstrReset();
-  int equal = ImageIsEqual(image_smaller, image_smaller); 
+  ImageIsEqual(image_smaller, image_smaller); 
   InstrPrint();
-  InstrReset();
 
   printf("Images 50 x 50:\n");
-
-  equal = ImageIsEqual(image_small, image_small);
-  InstrPrint();
   InstrReset();
+  ImageIsEqual(image_small, image_small);
+  InstrPrint();
 
   printf("Images 100 x 100:\n");
-
-  equal = ImageIsEqual(image_normal, image_normal);
-  InstrPrint();
   InstrReset();
+  ImageIsEqual(image_normal, image_normal);
+  InstrPrint();
 
   printf("Images 200 x 200:\n");
-  equal = ImageIsEqual(image_big, image_big);
-  InstrPrint();
   InstrReset();
+  ImageIsEqual(image_big, image_big);
+  InstrPrint();
 
   printf("Images 400 x 400:\n");
-  equal = ImageIsEqual(image_bigger, image_bigger);
-  InstrPrint();
   InstrReset();
+  ImageIsEqual(image_bigger, image_bigger);
+  InstrPrint();
+
+  printf("10) DetailedImageComparisons\n");
+
+  printf("Images 25 x 25, 5:\n");
+  InstrReset();
+  ImageIsEqual(image_smaller_chess, image_smaller_chess); 
+  InstrPrint();
+
+  printf("Images 50 x 50, 10:\n");
+  InstrReset();
+  ImageIsEqual(image_small_chess, image_small_chess);
+  InstrPrint();
+
+  printf("Images 100 x 100, 20:\n");
+  InstrReset();
+  ImageIsEqual(image_normal_chess, image_normal_chess);
+  InstrPrint();
+
+  printf("Images 200 x 200, 150:\n");
+  InstrReset();
+  ImageIsEqual(image_big_chess, image_big_chess);
+  InstrPrint();
+
+  printf("Images 400 x 400, 100:\n");
+  InstrReset();
+  ImageIsEqual(image_bigger_chess, image_bigger_chess);
+  InstrPrint();
+
+  printf("11) RectangleImageComparisons\n");
+
+  printf("Images 10 x 50:\n");
+  InstrReset();
+  ImageIsEqual(image_rectangle1, image_rectangle1); 
+  InstrPrint();
+
+  printf("Images 20 x 110:\n");
+  InstrReset();
+  ImageIsEqual(image_rectangle2, image_rectangle2); 
+  InstrPrint();
+
+  printf("Images 50 x 10, 5:\n");
+  InstrReset();
+  ImageIsEqual(image_rectangle_chess1, image_rectangle_chess1);
+  InstrPrint();
+
+  printf("Images 100 x 20, 5:\n");
+  InstrReset();
+  ImageIsEqual(image_rectangle_chess2, image_rectangle_chess2);
+  InstrPrint();
+
+  printf("12) DifferentImageComparisons\n");
+
+  printf("Images 25 x 25 and 100 x 100:\n");
+  InstrReset();
+  ImageIsEqual(image_smaller, image_normal); 
+  InstrPrint();
+
+  printf("Images 50 x 50 and 200 x 200:\n");
+  InstrReset();
+  ImageIsEqual(image_small, image_big); 
+  InstrPrint();
+
+  printf("Images 100 x 100 and 400 x 400:\n");
+  InstrReset();
+  ImageIsEqual(image_normal, image_bigger); 
+  InstrPrint();
+
 
   ImageDestroy(&white_image);
   ImageDestroy(&black_image);
@@ -142,6 +217,17 @@ int main(int argc, char* argv[]) {
   ImageDestroy(&image_normal);
   ImageDestroy(&image_big);
   ImageDestroy(&image_bigger);
+  ImageDestroy(&image_smaller_chess);
+  ImageDestroy(&image_small_chess);
+  ImageDestroy(&image_normal_chess);
+  ImageDestroy(&image_big_chess);
+  ImageDestroy(&image_bigger_chess);
+  ImageDestroy(&image_rectangle1);
+  ImageDestroy(&image_rectangle2);
+  ImageDestroy(&image_rectangle_chess1);
+  ImageDestroy(&image_rectangle_chess2);
+
+
 
 
   return 0;

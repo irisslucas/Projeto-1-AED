@@ -94,13 +94,13 @@ void ImageInit(void) {  ///
   InstrCalibrate();
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   // Name other counters here...
-  InstrName[1] = "compcount";
+  InstrName[1] = "compcount";  //InstrCount[i] para contar comparacoes
 }
 
 // Macros to simplify accessing instrumentation counters:
 #define PIXMEM InstrCount[0]
 // Add more macros here...
-#define COMPCOUNT InstrCount[1]     // para contar comparações
+#define COMPCOUNT InstrCount[1]     // COMPCOUNT para contar comparações
 
 // TIP: Search for PIXMEM or InstrCount to see where it is incremented!
 
