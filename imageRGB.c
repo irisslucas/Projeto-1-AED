@@ -827,8 +827,8 @@ int ImageSegmentation(Image img, FillingFunction fillFunct) {
 
   int numRegions = 0;
 
-  for (int v = 0; v < img->height; v++) {
-          for (int u = 0; u < img->width; u++) {
+  for (uint32 v = 0; v < img->height; v++) {
+          for (uint32 u = 0; u < img->width; u++) {
 
               // só começamos uma nova região se o pixel for branco
               if (img->image[v][u] == 0) {
