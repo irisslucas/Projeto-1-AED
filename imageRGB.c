@@ -710,11 +710,18 @@ int ImageRegionFillingRecursive(Image img, int u, int v, uint16 label) {
     img->image[v][u] = label;
     int count = 1;
 
-    // expandir para neighbors
-    count += ImageRegionFillingRecursive(img, u + 1, v, label);
-    count += ImageRegionFillingRecursive(img, u - 1, v, label);
-    count += ImageRegionFillingRecursive(img, u, v + 1, label);
-    count += ImageRegionFillingRecursive(img, u, v - 1, label);
+    // expandir para neighbors verificando que nao sai dos limites
+    if (ImageIsValidPixel(img, u+1, v))
+        count += ImageRegionFillingRecursive(img, u+1, v, label);
+   
+    if (ImageIsValidPixel(img, u-1, v))
+        count += ImageRegionFillingRecursive(img, u-1, v, label);
+    
+    if (ImageIsValidPixel(img, u, v+1))
+        count += ImageRegionFillingRecursive(img, u, v+1, label);
+    
+    if (ImageIsValidPixel(img, u, v-1))
+        count += ImageRegionFillingRecursive(img, u, v-1, label);
 
     return count;
 }
