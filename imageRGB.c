@@ -16,7 +16,7 @@
 // NMec: 115903
 // Name: Carolina Teixeira
 //
-// Date:
+// Date: 25/11/2025
 //
 
 #include "imageRGB.h"
@@ -580,8 +580,8 @@ int ImageIsEqual(const Image img1, const Image img2) {
     for (uint32 j=0;j < img1->width; j++){
       rgb_t c1 = img1->LUT[img1->image[i][j]];
       rgb_t c2 = img2->LUT[img2->image[i][j]];
-      PIXMEM += 2;
-      COMPCOUNT++;      // aumentar contador de comparacoes
+      PIXMEM += 2;      // 
+      COMPCOUNT++;      // aumentar contadores
       if (c1 != c2){
         return 0;
       }
