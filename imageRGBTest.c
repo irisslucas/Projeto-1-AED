@@ -155,18 +155,22 @@ int main(int argc, char* argv[]) {
 
   }
 
+  // testes de ImageSegmentation
+  // Filling with Queue
   printf("\n13) ImageSegmentationQueue\n");
   Image img1 = ImageCreateChess(30, 30, 10, 0x00ff00);
   ImageSavePPM(img1, "img_beforeQueue.ppm");
   printf("regioes encontradas: %d, regioes esperadas: 4\n", ImageSegmentation(img1, ImageRegionFillingWithQUEUE));
   ImageSavePPM(img1, "img_afterQueue.ppm");
 
+  // Filling with Stack 
   printf("\n14) ImageSegmentationStack\n");
   img1 = ImageCreateChess(20, 20, 5, 0x000000);
   ImageSavePPM(img1, "img_beforeStack.ppm");
   printf("regioes encontradas: %d, regioes esperadas: 8\n", ImageSegmentation(img1, ImageRegionFillingWithSTACK));
   ImageSavePPM(img1, "img_afterStack.ppm");
 
+  // Filling Recursive
   printf("\n15) ImageSegmentationRecursive\n");
   img1 = ImageCreateChess(25, 25, 5, 0xff0000);
   ImageSavePPM(img1, "img_beforeRec.ppm");

@@ -293,7 +293,7 @@ Image ImageCopy(const Image img) {
   img_copy->num_colors = img->num_colors;
   memcpy(img_copy->LUT, img->LUT, img->num_colors * sizeof(rgb_t));
 
-  // Alocar as linhas da copia e copiar pixeis
+  // Alocar as linhas da copia e copiar pixels
   for (uint32 i = 0; i < img->height; i++) {
       img_copy->image[i] = AllocateRowArray(img->width);
       memcpy(img_copy->image[i], img->image[i], img->width * sizeof(uint16));
